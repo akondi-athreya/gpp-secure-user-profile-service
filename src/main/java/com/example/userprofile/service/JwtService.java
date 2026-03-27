@@ -13,7 +13,7 @@ public class JwtService {
 
 	private final Key signingKey;
 
-	public JwtService(@Value("${api.signing-key}") String signingKeyValue) {
+	public JwtService(@Value("${api.signing-key:${API_SIGNING_KEY:abcdefghijklmnopqrstuvwxyz123456}}") String signingKeyValue) {
 		this.signingKey = Keys.hmacShaKeyFor(signingKeyValue.getBytes(StandardCharsets.UTF_8));
 	}
 

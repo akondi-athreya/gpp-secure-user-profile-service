@@ -109,6 +109,48 @@ docker compose up --build
 docker compose down
 ```
 
+## Deploy on Render
+
+This project currently includes Vault integration for local Docker Compose. On Render, your app failed because Vault auth was enabled but no Vault token was provided.
+
+The app is now configured to:
+
+- disable Vault by default (`SPRING_CLOUD_VAULT_ENABLED=false`)
+- treat Vault import as optional
+- read Render's dynamic `PORT` automatically
+
+### Render service settings
+
+- Runtime: Docker
+- Build Command: none (Render uses `Dockerfile`)
+- Start Command: none (uses container `ENTRYPOINT`)
+
+### Environment variables for Render
+
+Set these in your Render service:
+
+- `SPRING_CLOUD_VAULT_ENABLED=false`
+- `DB_USERNAME=sa`
+- `DB_PASSWORD=password123`
+- `API_SIGNING_KEY=abcdefghijklmnopqrstuvwxyz123456`
+
+Optional but recommended:
+
+- `SPRING_PROFILES_ACTIVE=render`
+
+You do not need to set `PORT`; Render injects it automatically and Spring now maps it via `server.port=${PORT:8080}`.
+
+### If you want Vault enabled on Render
+
+You must also provide Vault connectivity and token settings, for example:
+
+- `SPRING_CLOUD_VAULT_ENABLED=true`
+- `SPRING_CLOUD_VAULT_URI=<your-vault-url>`
+- `SPRING_CLOUD_VAULT_AUTHENTICATION=TOKEN`
+- `SPRING_CLOUD_VAULT_TOKEN=<your-token>`
+
+Without these, startup will fail with token authentication errors.
+
 ## Manual Verification Snippets
 
 Create profile:
